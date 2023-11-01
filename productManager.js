@@ -21,7 +21,19 @@ class ProductManager {
         fs.writeFileSync(this.path, data, 'utf8');
     }
 
+    isCodeUnique(code) {
+        return !this.products.some((product) => product.code === code);
+    }
+
+    isIdUnique(id) {
+        return !this.products.some((product) => product.id === id);
+    }
+
     addProduct(title, description, price, image, code, stock) {
+        if (!this.isCodeUnique(id)) {
+            console.log(`El código (ID) ${id} ya está en uso. No se puede agregar el producto.`);
+            return;
+        }
         const product = {
             title,
             description,
@@ -35,46 +47,36 @@ class ProductManager {
         console.log(`Producto agregado: ${title} (id: ${code})`);
     }
 
-    getProducts() {
-        return this.products;
-    }
 
-    getProductById(code) {
-        const product = this.products.find((product) => product.code === code);
-        if (product) {
-            console.log(`Producto encontrado: ${product.title} (id: ${product.code})`);
-        } else {
-            console.log(`Producto no encontrado con id: ${code}`);
+
+    // getProducts() {
+    //     return this.products;
+    // }
+
+    // getProductById(code) {
+    //     const product = this.products.find((product) => product.code === code);
+    //     if (product) {
+    //         console.log(`Producto encontrado: ${product.title} (id: ${product.code})`);
+    //     } else {
+    //         console.log(`Producto no encontrado con id: ${code}`);
+    //     }
+    //     return product;
+    // }
+
+    updateProduct(id, updatedProduct) {
+        if (!this.isIdUnique(id)) {
+            console.log(`No se puede actualizar el producto porque el ID ${id} ya está en uso.`);
+            return;
         }
-        return product;
-    }
-
-    updateProduct(code, updatedProduct) {
-        const index = this.products.findIndex((product) => product.code === code);
+        const index = this.products.findIndex((product) => product.id === id);
         if (index !== -1) {
             this.products[index] = { ...this.products[index], ...updatedProduct };
             this.saveProducts();
             console.log(`Producto actualizado con éxito.`);
         } else {
-            console.log(`Producto no encontrado con id: ${code}`);
-        }
-    }
-
-    deleteProduct(code) {
-        const index = this.products.findIndex((product) => product.code === code);
-        if (index !== -1) {
-            this.products.splice(index, 1);
-            this.saveProducts();
-            console.log(`Producto eliminado con éxito.`);
-        } else {
-            console.log(`Producto no encontrado con id: ${code}`);
+            console.log(`Producto no encontrado con ID: ${id}`);
         }
     }
 }
 
-const manager = new ProductManager('productData.json');
-
-manager.addProduct("Zapatillas Nike", "Zapatillas de Nike", 12999.99, "https://nikearprod.vtexassets.com/arquivos/ids/698518/DD8959_101_A_PREM.jpg?v=638229588960370000", 1, 15);
-manager.addProduct("Zapatillas Adidas", "Zapatillas de Adidas", 11999.99, "https://assets.adidas.com/images/w_600,f_auto,q_auto/284271d85b694ff5b8e6af6400cad5ee_9366/Zapatillas_adidas_Grand_Court_Cloudfoam_Lifestyle_Court_Comfort_Blanco_HP9410_01_standard.jpg", 2, 10);
-
-console.log("Lista de productos:", manager.getProducts());
+module.exports = ProductManager;
